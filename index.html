@@ -2,10 +2,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Tiny-SPA: Single Page Application Framework</title>
+    <!--<script src="lib/jquery-2.1.4.js"></script>-->
 </head>
-    <body>
-        <h1>index</h1>
-        <script src="src/http-service.js"></script>
-        <script src="app.js"></script>
-    </body>
+<body>
+    <h1>index</h1>
+
+    <a t-route="/about" template-url="" controller-url=""><span>about</span></a>
+
+    <div t-load="templates/header"></div>
+    <div t-load="templates/footer"></div>
+
+    <div t-view></div>
+    
+    <div t-controller="myCtrl">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+    </div>
+
+    <script src="src/http-service.js"></script>
+    <script src="src/template-loader-service.js"></script>
+    <script src="app.js"></script>
+</body>
 </html>

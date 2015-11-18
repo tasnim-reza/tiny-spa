@@ -19,7 +19,7 @@
 
     // progress on transfers from the server to the client (downloads)
     function updateProgress(oEvent) {
-        console.log("in progress");
+        //console.log("in progress");
         if (oEvent.lengthComputable) {
             var percentComplete = oEvent.loaded / oEvent.total;
             // ...
@@ -29,7 +29,7 @@
     }
 
     function transferComplete(evt) {
-        console.log("The transfer is complete.");
+        //console.log("The transfer is complete.");
         successCallback(client.responseText);
     }
 
