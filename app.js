@@ -13,8 +13,6 @@
 
     //template load line ng-include
     tLoad();
-
-
 })();
 
 function tRoute() {
@@ -63,6 +61,7 @@ function viewLoad(templateUrl) {
 function loadTemplate(element, templateUrl) {
     new templateLoaderService(templateUrl, function (evt) {
         element.innerHTML = evt;
+
         //element.addEventListener('onload', function () {
         //    console.log('onload');
         //    element.removeEventListener('onload');
@@ -70,5 +69,4 @@ function loadTemplate(element, templateUrl) {
     }, function (evt) {
         console.log('error', evt);
     });
-
 }
