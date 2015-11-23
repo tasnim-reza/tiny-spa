@@ -1,4 +1,14 @@
 
+$('#t').data('foo', 'reza');
+
+console.log($('#t').data('foo'));
+
+var div = document.getElementById('t');
+div.myName = ['lemons', 3];
+
+console.log(div.myName);
+
+
 (function appService() {
 
 
@@ -11,8 +21,10 @@
     //template load based on anchor/other element click t-route
     tRoute();
 
-    //template load line ng-include
+    //template load in line ng-include
     tLoad();
+
+
 })();
 
 function tRoute() {

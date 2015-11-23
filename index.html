@@ -2,10 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Tiny-SPA: Single Page Application Framework</title>
-    <!--<script src="lib/jquery-2.1.4.js"></script>-->
+    <script src="lib/jquery-2.1.4.js"></script>
 </head>
 <body>
     <h1>index</h1>
+    
+    <h2 id="t">t</h2>
 
     <a t-route="/about" template-url="" controller-url=""><span>about</span></a>
 
@@ -13,8 +15,8 @@
     <div t-load="templates/footer"></div>
 
     <div t-view></div>
-    
-    <div t-controller="myCtrl">
+
+    <div t-controller="myCtrl" >
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
@@ -23,9 +25,12 @@
     <script src="src/http-service.js"></script>
     <script src="src/template-loader-service.js"></script>
     <script src="app.js"></script>
-    
+
     <div ng-app="myApp">
-        <div ng-controller="myCtrl">{{msg}}</div>
+        <div ng-controller="myCtrl">
+            {{msg}}
+            <a href="javascript:void(0)" ng-click="onclick()">on click</a>
+        </div>
     </div>
     <script src="lib/angular.js"></script>
     <script src="src/test-ang-app.js"></script>
