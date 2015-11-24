@@ -5,8 +5,10 @@ app.controller('myCtrl', [
 
         $scope.onclick = function () {
             var myService2Obj = $injector.invoke(['myService', myService2]);
+            console.log(app);
         }
-        //myService1.say();
+
+        console.log(app);
     }
 ]);
 

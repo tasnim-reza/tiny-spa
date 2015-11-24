@@ -1,16 +1,9 @@
 
-$('#t').data('foo', 'reza');
-
-console.log($('#t').data('foo'));
-
-var div = document.getElementById('t');
-div.myName = ['lemons', 3];
-
-console.log(div.myName);
-
-
 (function appService() {
 
+    var container = new Map();
+
+    var di = new t(null, container);
 
     loadViewBasedOnHash();
 
@@ -24,8 +17,23 @@ console.log(div.myName);
     //template load in line ng-include
     tLoad();
 
-
+    //compile
+    tControllerCompile(di);
 })();
+
+function tControllerCompile(di) {
+    var controllers = document.body.querySelectorAll('[t-controller]');
+    for (var key in controllers) {
+        if (controllers.hasOwnProperty(key)) {
+            var element = controllers[key];
+            var ctrlName = element.getAttribute('t-controller');
+            var ctrlObj = di.get(ctrlName).then(function (obj) {
+                console.log(obj);
+            });
+
+        }
+    }
+}
 
 function tRoute() {
     var routers = document.body.querySelectorAll('[t-route]');
@@ -82,3 +90,28 @@ function loadTemplate(element, templateUrl) {
         console.log('error', evt);
     });
 }
+
+t(['serviceA', 'serviceB', function serviceC(serviceA, serviceB) {
+    this.say = function () {
+        console.log('service c');
+    };
+
+    serviceA.say();
+    serviceB.say();
+}]);
+
+t([function serviceA() {
+    this.say = function () {
+        console.log('service a');
+    }
+}]);
+
+t([function serviceB() {
+    this.say = function () {
+        console.log('service b');
+    }
+}]);
+
+t(['serviceC', function controllerA(serviceC) {
+
+}])

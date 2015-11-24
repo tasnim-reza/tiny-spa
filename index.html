@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Tiny-SPA: Single Page Application Framework</title>
-    <script src="lib/jquery-2.1.4.js"></script>
+    <!--<script src="lib/jquery-2.1.4.js"></script>-->
 </head>
 <body>
-    <h1>index</h1>
+    <h1 id="index">index</h1>
     
     <h2 id="t">t</h2>
 
@@ -22,6 +22,13 @@
         <label t-bind="myModel"></label>
     </div>
 
+    <div t-controller="myCtrl1">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+    </div>
+
+    <script src="src/t.js"></script>
     <script src="src/http-service.js"></script>
     <script src="src/template-loader-service.js"></script>
     <script src="app.js"></script>
