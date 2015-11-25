@@ -1,21 +1,27 @@
-﻿
-function di(container) {
-    
-}
+﻿(function bootstrap() {
 
+    var container = new Map();
 
-function t(fn, con) {
-    if (fn === null && con)
-        var container = con;
+    var di = new IoC(container);
 
-    if (Array.isArray(fn)) {
-        var constructor = fn[fn.length - 1],
-            dependencies = fn.splice(fn.length - 1, 1);
+    loadViewBasedOnHash();
 
-        if (!container.has(constructor.name))
-            doRegister(container, constructor);
-    }
+    window.onhashchange = function (url) {
+        loadViewBasedOnHash();
+    };
 
+    //template load based on anchor/other element click t-route
+    tRoute();
+
+    //template load in line ng-include
+    tLoad();
+
+    //compile
+    tControllerCompile(di);
+})();
+
+//di
+function IoC(container) {
     this.get = function (name) {
         return {
             then: function then(callback) {
@@ -25,7 +31,6 @@ function t(fn, con) {
             }
         };
     }
-
 }
 
 function doRegister(container, constructor) {
@@ -34,8 +39,107 @@ function doRegister(container, constructor) {
 }
 
 function getInstance(container, fnName) {
+    if (!ns.externalObjectQueue[fnName]) throw (fnName + ' Did not found in externalObjectQueue, please register first.');
+
+    doRegister(container, ns.externalObjectQueue[fnName].constructor);
+
     if (!container[fnName]) throw (fnName + ' Not found in container, please register first.');
 
     return Object.create(container.get(fnName));
 }
 
+function namespace(name) {
+    var self = this;
+
+    this.ns = name;
+    this.externalObjectQueue = [];
+
+
+    return function register(fn) {
+        if (Array.isArray(fn)) {
+            var constructor = fn[fn.length - 1],
+                dependencies = fn.splice(fn.length - 1, 1);
+
+            var key = constructor.name;
+
+            if (!self.externalObjectQueue[key]) {
+                self.externalObjectQueue[key] = {
+                    constructor: constructor,
+                    dependencies: dependencies
+                };
+            }
+        }
+    };
+}
+
+//directives
+
+function tControllerCompile(di) {
+    var controllers = document.body.querySelectorAll('[t-controller]');
+    for (var key in controllers) {
+        if (controllers.hasOwnProperty(key)) {
+            var element = controllers[key];
+            var ctrlName = element.getAttribute('t-controller');
+            var ctrlObj = di.get(ctrlName).then(function (obj) {
+                console.log(obj);
+            });
+
+        }
+    }
+}
+
+function tRoute() {
+    var routers = document.body.querySelectorAll('[t-route]');
+    for (var key in routers) {
+        if (routers.hasOwnProperty(key)) {
+            var element = routers[key];
+            var url = element.getAttribute('t-route'),
+                templateUrl = element.getAttribute('template-url'),
+                controllerUrl = element.getAttribute('controller-url');
+            element.setAttribute('href', '#' + url);
+
+            element.addEventListener('onclick', function () {
+                //setTimeout((loadTemplate)(element, templateUrl));
+            });
+        }
+    }
+}
+
+function tLoad() {
+    var loaders = document.body.querySelectorAll('[t-load]');
+
+    for (var key in loaders) {
+        if (loaders.hasOwnProperty(key)) {
+            var element = loaders[key];
+            var templateUrl = element.getAttribute('t-load');
+            setTimeout((loadTemplate)(element, templateUrl));
+        }
+    };
+}
+
+function loadViewBasedOnHash() {
+    if (location.hash) {
+        var templateUrl = location.hash.split('/')[1];
+        viewLoad(templateUrl);
+    } else {
+        window.location.hash = '#/dashboard';
+    }
+}
+
+function viewLoad(templateUrl) {
+    var view = document.body.querySelector('[t-view]');
+    loadTemplate(view, 'views/' + templateUrl);
+}
+
+function loadTemplate(element, templateUrl) {
+    new templateLoaderService(templateUrl, function (evt) {
+        element.innerHTML = evt;
+
+        //element.addEventListener('onload', function () {
+        //    console.log('onload');
+        //    element.removeEventListener('onload');
+        //});
+    }, function (evt) {
+        console.log('error', evt);
+    });
+}
