@@ -1,8 +1,10 @@
-﻿(function bootstrap() {
+﻿(function bootstrap(window) {
 
     var container = new Map();
 
     var di = new IoC(container);
+    //register namespace to global
+    window.namespace = namespace;
 
     loadViewBasedOnHash();
 
@@ -18,7 +20,31 @@
 
     //compile
     tControllerCompile(di);
-})();
+
+    function namespace(name) {
+        var self = this,
+            ns = name;
+
+        return function register(fn) {
+            if (Array.isArray(fn)) {
+                var constructor = fn[fn.length - 1],
+                    dependencies = fn.splice(fn.length - 1, 1);
+
+                var key = constructor.name;
+
+                if (!container.has(key)) {
+                    container.set(key, {
+                        constructor: constructor,
+                        dependencies: dependencies
+                    });
+                }
+            }
+        };
+    }
+
+
+
+})(window);
 
 //di
 function IoC(container) {
@@ -39,37 +65,9 @@ function doRegister(container, constructor) {
 }
 
 function getInstance(container, fnName) {
-    if (!ns.externalObjectQueue[fnName]) throw (fnName + ' Did not found in externalObjectQueue, please register first.');
+    if (!container.has(fnName)) throw (fnName + ' Not found in container, please register first.');
 
-    doRegister(container, ns.externalObjectQueue[fnName].constructor);
-
-    if (!container[fnName]) throw (fnName + ' Not found in container, please register first.');
-
-    return Object.create(container.get(fnName));
-}
-
-function namespace(name) {
-    var self = this;
-
-    this.ns = name;
-    this.externalObjectQueue = [];
-
-
-    return function register(fn) {
-        if (Array.isArray(fn)) {
-            var constructor = fn[fn.length - 1],
-                dependencies = fn.splice(fn.length - 1, 1);
-
-            var key = constructor.name;
-
-            if (!self.externalObjectQueue[key]) {
-                self.externalObjectQueue[key] = {
-                    constructor: constructor,
-                    dependencies: dependencies
-                };
-            }
-        }
-    };
+    return Object.create(container.get(fnName).constructor);
 }
 
 //directives

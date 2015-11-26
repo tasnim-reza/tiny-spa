@@ -16,30 +16,31 @@
 
     <div t-view></div>
 
-    <div t-controller="myCtrl" >
+    <div t-controller="controllerA">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
     </div>
 
-    <div t-controller="myCtrl1">
+    <div t-controller="controllerB">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
     </div>
 
-    <script src="src/t.js"></script>
     <script src="src/http-service.js"></script>
     <script src="src/template-loader-service.js"></script>
+    <script src="src/t.js"></script>
+
     <script src="app.js"></script>
 
-    <div ng-app="myApp">
+    <!--<div ng-app="myApp">
         <div ng-controller="myCtrl">
             {{msg}}
             <a href="javascript:void(0)" ng-click="onclick()">on click</a>
         </div>
     </div>
     <script src="lib/angular.js"></script>
-    <script src="src/test-ang-app.js"></script>
+    <script src="src/test-ang-app.js"></script>-->
 </body>
 </html>
