@@ -42,8 +42,6 @@
         };
     }
 
-
-
 })(window);
 
 //di
@@ -64,10 +62,12 @@ function doRegister(container, constructor) {
         container.set(constructor.name, constructor);
 }
 
-function getInstance(container, fnName) {
+function getInstance(container, fnName, args) {
     if (!container.has(fnName)) throw (fnName + ' Not found in container, please register first.');
 
-    return Object.create(container.get(fnName).constructor);
+    var instance = Object.create(container.get(fnName).prototype);
+    instance.apply(instance, args);
+    return instance;
 }
 
 //directives

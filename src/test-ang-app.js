@@ -1,6 +1,14 @@
 ﻿var app = angular.module('myApp', []);
 app.controller('myCtrl', [
-    '$scope', '$injector', function ($scope, $injector) {
+    //'$scope',
+    //'$injector',
+    'myService1',
+    function (
+       // $scope,
+        //$injector
+        myService1
+        ) {
+
         $scope.msg = 'my msg';
 
         $scope.onclick = function () {
