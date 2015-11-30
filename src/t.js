@@ -27,8 +27,8 @@
 
         return function register(fn) {
             if (Array.isArray(fn)) {
-                var constructor = fn[fn.length - 1],
-                    dependencies = fn.splice(fn.length - 1, 1);
+                var constructor = fn.splice(fn.length - 1, 1)[0],
+                    dependencies = fn;
 
                 var key = constructor.name;
 
@@ -50,7 +50,7 @@ function IoC(container) {
         return {
             then: function then(callback) {
                 setTimeout(function () {
-                    callback(getInstance(container, name));
+                    callback(createInstance(container, name));
                 });
             }
         };
@@ -62,12 +62,37 @@ function doRegister(container, constructor) {
         container.set(constructor.name, constructor);
 }
 
-function getInstance(container, fnName, args) {
-    if (!container.has(fnName)) throw (fnName + ' Not found in container, please register first.');
+function createInstance(container, name) {
+    if (!container.has(name)) throw (name + ' Not found in container, please register first.');
+    var cachedInstance = container.get(name);
+    var dependencyIns = createDependentInstance(container, cachedInstance, []);
 
-    var instance = Object.create(container.get(fnName).prototype);
-    instance.apply(instance, args);
-    return instance;
+    var instance = Object.create(cachedInstance.constructor.prototype);
+    cachedInstance.constructor.apply(instance, dependencyIns);
+    return cachedInstance;
+}
+
+function createDependentInstance(container, cachedInstance, args) {
+    console.log(cachedInstance.constructor.name);
+
+    for (var i = 0; i < cachedInstance.dependencies.length; i++) {
+        var name = cachedInstance.dependencies[i];
+        var cachedInstance1 = container.get(name);
+
+        if (cachedInstance1.dependencies.length > 0) {
+            //var cachedInstance1 = container.get(cachedInstance.dependencies.shift());
+            createDependentInstance(container, cachedInstance1, args);
+        }
+        var instance = Object.create(cachedInstance1.constructor.prototype);
+        cachedInstance1.constructor.apply(instance, []);
+        args.push(instance);
+
+    };
+
+    var instance1 = Object.create(cachedInstance.constructor.prototype);
+    cachedInstance.constructor.apply(instance1, args);
+
+    return instance1;
 }
 
 //directives
