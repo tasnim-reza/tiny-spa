@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1 id="index">index</h1>
-    
+
     <h2 id="t">t</h2>
 
     <a t-route="/about" template-url="" controller-url=""><span>about</span></a>
@@ -20,12 +20,15 @@
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-    </div>
+        <button t-click="onclick">on click</button>
 
+    </div>
+    <hr />
     <div t-controller="controllerB">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
+        <button t-click="onclick">on click</button>
     </div>
 
     <script src="src/http-service.js"></script>

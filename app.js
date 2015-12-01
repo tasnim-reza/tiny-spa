@@ -6,13 +6,15 @@ ns(['serviceC', function controllerA(serviceC) {
     serviceC.say();
 
     this.onclick = function () {
-        console.log('fired, on click');
+        console.log('fired, on click from controller A');
     }
 }]);
 
-//ns(['serviceC', function controllerB(serviceC) {
-
-//}]);
+ns(['serviceC', function controllerB(serviceC) {
+    this.onclick = function () {
+        console.log('fired, on click  from controller B');
+    }
+}]);
 
 ns(['serviceA', 'serviceB', function serviceC(serviceA, serviceB) {
     this.say = function () {

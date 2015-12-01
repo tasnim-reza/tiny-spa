@@ -50,7 +50,7 @@ function IoC(container) {
         return {
             then: function then(callback) {
                 setTimeout(function () {
-                    callback(createInstance(container, name));
+                    callback(getInstance(container, name));
                 });
             }
         };
@@ -62,37 +62,26 @@ function doRegister(container, constructor) {
         container.set(constructor.name, constructor);
 }
 
-function createInstance(container, name) {
-    if (!container.has(name)) throw (name + ' Not found in container, please register first.');
-    var cachedInstance = container.get(name);
-    var dependencyIns = createDependentInstance(container, cachedInstance, []);
+function getInstance(container, funcName) {
+    if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
+    var referenedFunc = container.get(funcName);
 
-    var instance = Object.create(cachedInstance.constructor.prototype);
-    cachedInstance.constructor.apply(instance, dependencyIns);
-    return cachedInstance;
+    var instance = Object.create(referenedFunc.constructor.prototype);
+
+    return createInstance(container, referenedFunc.constructor, instance, referenedFunc.dependencies);
 }
 
-function createDependentInstance(container, cachedInstance, args) {
-    console.log(cachedInstance.constructor.name);
+function createInstance(container, fn, instance, dependencies) {
+    var args = [];
 
-    for (var i = 0; i < cachedInstance.dependencies.length; i++) {
-        var name = cachedInstance.dependencies[i];
-        var cachedInstance1 = container.get(name);
-
-        if (cachedInstance1.dependencies.length > 0) {
-            //var cachedInstance1 = container.get(cachedInstance.dependencies.shift());
-            createDependentInstance(container, cachedInstance1, args);
-        }
-        var instance = Object.create(cachedInstance1.constructor.prototype);
-        cachedInstance1.constructor.apply(instance, []);
-        args.push(instance);
-
+    for (var i = 0; i < dependencies.length; i++) {
+        var fnName = dependencies[i];
+        args.push(getInstance(container, fnName));
     };
 
-    var instance1 = Object.create(cachedInstance.constructor.prototype);
-    cachedInstance.constructor.apply(instance1, args);
+    fn.apply(instance, args);
 
-    return instance1;
+    return instance;
 }
 
 //directives
@@ -103,12 +92,19 @@ function tControllerCompile(di) {
         if (controllers.hasOwnProperty(key)) {
             var element = controllers[key];
             var ctrlName = element.getAttribute('t-controller');
-            var ctrlObj = di.get(ctrlName).then(function (obj) {
-                console.log(obj);
-            });
-
+            var button = element.querySelector('[t-click]');
+            bindEvents(di, ctrlName, button);
         }
     }
+}
+function bindEvents(di, ctrlName, button) {
+    (function (localCtrlName, localButton) {
+        var lCtrlName = localCtrlName, lbtn = localButton;
+        var ctrlObj = di.get(lCtrlName).then(function (obj) {
+            lbtn.onclick = obj['onclick'];
+            console.log(obj);
+        });
+    })(ctrlName, button);
 }
 
 function tRoute() {
