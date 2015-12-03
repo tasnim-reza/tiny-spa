@@ -25,16 +25,19 @@
         var self = this,
             ns = name;
 
-        return function register(fn) {
-            if (Array.isArray(fn)) {
-                var constructor = fn.splice(fn.length - 1, 1)[0],
-                    dependencies = fn;
+        return function register(serviceName, filesTobeLoaded, fn) {
+            var names = serviceName.split(':');
+            var key = names[0];
+            var parent = names.length > 1 ? names[1] : null;
 
-                var key = constructor.name;
+            if (Array.isArray(fn)) {
+                var service = fn.splice(fn.length - 1, 1)[0],
+                    dependencies = fn;
 
                 if (!container.has(key)) {
                     container.set(key, {
-                        constructor: constructor,
+                        service: service,
+                        parent: parent,
                         dependencies: dependencies
                     });
                 }
