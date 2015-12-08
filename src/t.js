@@ -25,7 +25,7 @@
         var self = this,
             ns = name;
 
-        return function register(serviceName, filesTobeLoaded, fn) {
+        return function register(serviceName, filesToBeLoaded, fn) {
             var names = serviceName.split(':');
             var key = names[0];
             var parent = names.length > 1 ? names[1] : null;
@@ -69,9 +69,14 @@ function getInstance(container, funcName) {
     if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
     var referenedFunc = container.get(funcName);
 
-    var instance = Object.create(referenedFunc.constructor.prototype);
+    if (referenedFunc.parent) {
+        var parentInstance = getInstance(container, referenedFunc.parent);
+        referenedFunc.service.prototype = parentInstance;
+    }
 
-    return createInstance(container, referenedFunc.constructor, instance, referenedFunc.dependencies);
+    var instance = Object.create(referenedFunc.service.prototype);
+
+    return createInstance(container, referenedFunc.service, instance, referenedFunc.dependencies);
 }
 
 function createInstance(container, fn, instance, dependencies) {
