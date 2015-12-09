@@ -25,6 +25,32 @@
         var self = this,
             ns = name;
 
+
+        //var register = {
+        //    controller: function () {
+
+        //    },
+        //    parentController: function () {
+
+        //    },
+        //    viewParentController: function () {
+
+        //    },
+
+        //    service: function () {
+
+        //    },
+        //    parentService: function () {
+
+        //    },
+        //    staticService: function () {
+
+        //    },
+        //    callBack: function () {
+
+        //    }
+        //};
+
         return function register(serviceName, filesToBeLoaded, fn) {
             var names = serviceName.split(':');
             var key = names[0];

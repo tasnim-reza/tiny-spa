@@ -1,6 +1,12 @@
 var ns = window.namespace('myApp');
+//ns
+//    .name() //controller, service, asStaticService, 
+//    .parent() //.asViewParent()
+//    .filesTobeLoaded()
+//    .dependencies()
+//    .callbacks();
 
-ns('parentControllerB', [], ['serviceA', function parentController(serviceA) {
+ns('parentControllerB', [], ['serviceA', function parentControllerB(serviceA) {
     console.log('parentControllerB loaded');
 
     this.base = function () {
@@ -10,7 +16,7 @@ ns('parentControllerB', [], ['serviceA', function parentController(serviceA) {
 
 }]);
 
-ns('parentControllerA:parentControllerB', [], ['serviceA', function parentController(serviceA) {
+ns('parentControllerA:parentControllerB', [], ['serviceA', function parentControllerA(serviceA) {
     console.log('parentControllerA loaded');
 
     this.base = function () {
@@ -18,6 +24,10 @@ ns('parentControllerA:parentControllerB', [], ['serviceA', function parentContro
         console.log('parent controller base method called');
     }
 
+}]);
+
+ns('viewParentControllerA', [], [function viewParentControllerA() {
+    console.log('parentControllerA loaded');
 }]);
 
 ns('controllerA:parentControllerA', [], ['serviceC', function controllerA(serviceC) {
