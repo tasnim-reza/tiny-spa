@@ -31,6 +31,42 @@
         <button t-click="onclick">on click</button>
     </div>
 
+    <hr />
+    <div t-controller="controllerC">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+        <button t-click="onclick">on click</button>
+    </div>
+
+    <hr />
+    <div t-controller="controllerD">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+        <button t-click="onclick">on click</button>
+
+        <div t-controller="controllerE">
+            <input type="text" t-twoway-model="myModel" />
+            <input type="text" t-model="myModel" />
+            <label t-bind="myModel"></label>
+            <button t-click="onclick">on click</button>
+        </div>
+
+        <div t-controller="controllerF">
+            <input type="text" t-twoway-model="myModel" />
+            <input type="text" t-model="myModel" />
+            <label t-bind="myModel"></label>
+            <button t-click="onclick">on click</button>
+        </div>
+    </div>
+
+    <div t-controller="controllerG">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+        <button t-click="onclick">on click</button>
+    </div>
     <script src="src/http-service.js"></script>
     <script src="src/template-loader-service.js"></script>
     <script src="src/t.js"></script>

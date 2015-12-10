@@ -26,10 +26,6 @@ ns('parentControllerA:parentControllerB', [], ['serviceA', function parentContro
 
 }]);
 
-ns('viewParentControllerA', [], [function viewParentControllerA() {
-    console.log('parentControllerA loaded');
-}]);
-
 ns('controllerA:parentControllerA', [], ['serviceC', function controllerA(serviceC) {
     console.log('controller a loaded');
 
@@ -43,6 +39,25 @@ ns('controllerA:parentControllerA', [], ['serviceC', function controllerA(servic
 }]);
 
 ns('controllerB', [], ['serviceC', function controllerB(serviceC) {
+    this.onclick = function () {
+        console.log('fired, on click  from controller B');
+    }
+    serviceC.sayC();
+}]);
+
+
+ns('parentControllerView:asView', [], ['serviceC', function parentControllerView(serviceC) {
+    console.log('parentControllerView loaded');
+}]);
+
+ns('controllerC:parentControllerView', [], ['serviceC', function controllerB(serviceC) {
+    this.onclick = function () {
+        console.log('fired, on click  from controller B');
+    }
+    serviceC.sayC();
+}]);
+
+ns('controllerD:parentControllerView', [], ['serviceC', function controllerB(serviceC) {
     this.onclick = function () {
         console.log('fired, on click  from controller B');
     }
@@ -69,6 +84,8 @@ ns('serviceB', [], [function serviceB() {
         console.log('service b');
     }
 }]);
+
+
 
 function funcA() {
     this.say = function () {

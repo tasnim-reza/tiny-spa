@@ -53,17 +53,23 @@
 
         return function register(serviceName, filesToBeLoaded, fn) {
             var names = serviceName.split(':');
-            var key = names[0];
-            var parent = names.length > 1 ? names[1] : null;
+            var funcName = names[0];
+            var viewParent = null, parent = null;
+
+            if (names.length > 1) {
+                viewParent = names[1] === 'asView' ? names[0] : null;
+                parent = viewParent ? names[2] && names[2] : names[1];
+            }
 
             if (Array.isArray(fn)) {
                 var service = fn.splice(fn.length - 1, 1)[0],
                     dependencies = fn;
 
-                if (!container.has(key)) {
-                    container.set(key, {
+                if (!container.has(funcName)) {
+                    container.set(funcName, {
                         service: service,
                         parent: parent,
+                        viewParent: viewParent,
                         dependencies: dependencies
                     });
                 }
@@ -75,48 +81,55 @@
 
 //di
 function IoC(container) {
+    var viewParentCache = []; // this should be clear after route change
+
+    function getInstance(funcName) {
+        if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
+        var referenedFunc = container.get(funcName);
+
+        if (referenedFunc.parent) {
+            var parentInstance = getInstance(referenedFunc.parent);
+            referenedFunc.service.prototype = parentInstance;
+        }
+
+        if (viewParentCache[funcName])
+            return viewParentCache[funcName];
+
+        var instance = Object.create(referenedFunc.service.prototype);
+        var actualInstance = createInstance(referenedFunc.service, instance, referenedFunc.dependencies);
+
+        if (referenedFunc.viewParent && !viewParentCache[referenedFunc.viewParent]) {
+            viewParentCache[referenedFunc.viewParent] = actualInstance;
+        }
+
+        return actualInstance;
+    }
+
+    function createInstance(fn, instance, dependencies) {
+        var args = [];
+
+        for (var i = 0; i < dependencies.length; i++) {
+            var fnName = dependencies[i];
+            args.push(getInstance(fnName));
+        };
+
+        fn.apply(instance, args);
+
+        return instance;
+    }
+
+
     this.get = function (name) {
         return {
             then: function then(callback) {
                 setTimeout(function () {
-                    callback(getInstance(container, name));
+                    callback(getInstance(name));
                 });
             }
         };
     }
 }
 
-function doRegister(container, constructor) {
-    if (!container.has(constructor.name))
-        container.set(constructor.name, constructor);
-}
-
-function getInstance(container, funcName) {
-    if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
-    var referenedFunc = container.get(funcName);
-
-    if (referenedFunc.parent) {
-        var parentInstance = getInstance(container, referenedFunc.parent);
-        referenedFunc.service.prototype = parentInstance;
-    }
-
-    var instance = Object.create(referenedFunc.service.prototype);
-
-    return createInstance(container, referenedFunc.service, instance, referenedFunc.dependencies);
-}
-
-function createInstance(container, fn, instance, dependencies) {
-    var args = [];
-
-    for (var i = 0; i < dependencies.length; i++) {
-        var fnName = dependencies[i];
-        args.push(getInstance(container, fnName));
-    };
-
-    fn.apply(instance, args);
-
-    return instance;
-}
 
 //directives
 
@@ -125,6 +138,9 @@ function tControllerCompile(di) {
     for (var key in controllers) {
         if (controllers.hasOwnProperty(key)) {
             var element = controllers[key];
+
+            //element.hasChildNodes[parseInt(key)]
+
             var ctrlName = element.getAttribute('t-controller');
             var button = element.querySelector('[t-click]');
             bindEvents(di, ctrlName, button);
