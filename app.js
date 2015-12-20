@@ -9,32 +9,35 @@ var ns = window.namespace('myApp');
 ns('parentControllerB', [], ['serviceA', function parentControllerB(serviceA) {
     console.log('parentControllerB loaded');
 
-    this.base = function () {
+    this.baseB = function () {
         serviceA.sayA();
-        console.log('parent controller base method called');
+        console.log('parent controller B base method called');
     }
 
 }]);
 
-ns('parentControllerA:parentControllerB', [], ['serviceA', function parentControllerA(serviceA) {
+ns('parentControllerA : parentControllerB', [], ['serviceA', function parentControllerA(serviceA) {
     console.log('parentControllerA loaded');
 
-    this.base = function () {
+    this.baseA = function () {
         serviceA.sayA();
-        console.log('parent controller base method called');
+        console.log('parent controller A base method called');
+        this.baseB();
     }
 
 }]);
 
-ns('controllerA:parentControllerA', [], ['serviceC', function controllerA(serviceC) {
+ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serviceC) {
+    var self = this;
     console.log('controller a loaded');
 
     serviceC.sayC();
 
-    this.base();
+    this.baseA();
 
     this.onclick = function () {
         console.log('fired, on click from controller A');
+        self.baseA();
     }
 }]);
 
@@ -45,24 +48,60 @@ ns('controllerB', [], ['serviceC', function controllerB(serviceC) {
     serviceC.sayC();
 }]);
 
-
-ns('parentControllerView:asView', [], ['serviceC', function parentControllerView(serviceC) {
+ns('parentController', [], ['serviceC', function parentControllerView(serviceC) {
     console.log('parentControllerView loaded');
 }]);
 
-ns('controllerC:parentControllerView', [], ['serviceC', function controllerB(serviceC) {
+ns('controllerC', [], ['serviceC', function controllerB(serviceC) {
     this.onclick = function () {
-        console.log('fired, on click  from controller B');
+        console.log('fired, on click  from controller C');
     }
     serviceC.sayC();
 }]);
 
-ns('controllerD:parentControllerView', [], ['serviceC', function controllerB(serviceC) {
+
+ns('controllerD', [], ['serviceC', function controllerD(serviceC) {
+    var counter = 0;
     this.onclick = function () {
-        console.log('fired, on click  from controller B');
+        console.log('fired, on click  from controller D');
+    }
+
+    this.base = function () {
+        counter++;
+        console.log('from base D ');
+    }
+
+    this.getCounter = function () {
+        return counter;
+    }
+
+    serviceC.sayC();
+}]);
+
+ns('controllerE', [], ['serviceC', function controllerE(serviceC) {
+    var self = this;
+    this.onclick = function () {
+        console.log('fired, on click  from controller E');
+        self.base();
     }
     serviceC.sayC();
 }]);
+
+ns('controllerF', [], ['serviceC', function controllerF(serviceC) {
+    this.onclick = function () {
+        console.log('fired, on click  from controller F : ' + this.getCounter());
+    }
+    serviceC.sayC();
+}]);
+
+
+ns('controllerG', [], ['serviceC', function controllerG(serviceC) {
+    this.onclick = function () {
+        console.log('fired, on click  from controller G');
+    }
+    serviceC.sayC();
+}]);
+
 
 ns('serviceC', [], ['serviceA', 'serviceB', function serviceC(serviceA, serviceB) {
     this.sayC = function () {

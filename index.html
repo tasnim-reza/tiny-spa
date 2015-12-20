@@ -20,7 +20,7 @@
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click</button>
+        <button t-click="onclick">on click A</button>
 
     </div>
     <hr />
@@ -28,7 +28,7 @@
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click</button>
+        <button t-click="onclick">on click B</button>
     </div>
 
     <hr />
@@ -36,7 +36,7 @@
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click</button>
+        <button t-click="onclick">on click C</button>
     </div>
 
     <hr />
@@ -44,28 +44,28 @@
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click</button>
+        <button t-click="onclick">on click D</button>
 
         <div t-controller="controllerE">
             <input type="text" t-twoway-model="myModel" />
             <input type="text" t-model="myModel" />
             <label t-bind="myModel"></label>
-            <button t-click="onclick">on click</button>
+            <button t-click="onclick">on click E</button>
         </div>
 
         <div t-controller="controllerF">
             <input type="text" t-twoway-model="myModel" />
             <input type="text" t-model="myModel" />
             <label t-bind="myModel"></label>
-            <button t-click="onclick">on click</button>
+            <button t-click="onclick">on click F</button>
         </div>
     </div>
-
+    <hr />
     <div t-controller="controllerG">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click</button>
+        <button t-click="onclick">on click G</button>
     </div>
     <script src="src/http-service.js"></script>
     <script src="src/template-loader-service.js"></script>

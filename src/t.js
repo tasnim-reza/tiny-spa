@@ -2,7 +2,7 @@
 
     var container = new Map();
 
-    var di = new IoC(container);
+    var di = new IoC(container, register);
     //register namespace to global
     window.namespace = namespace;
 
@@ -51,39 +51,49 @@
         //    }
         //};
 
-        return function register(serviceName, filesToBeLoaded, fn) {
-            var names = serviceName.split(':');
-            var funcName = names[0];
-            var viewParent = null, parent = null;
-
-            if (names.length > 1) {
-                viewParent = names[1] === 'asView' ? names[0] : null;
-                parent = viewParent ? names[2] && names[2] : names[1];
-            }
-
-            if (Array.isArray(fn)) {
-                var service = fn.splice(fn.length - 1, 1)[0],
-                    dependencies = fn;
-
-                if (!container.has(funcName)) {
-                    container.set(funcName, {
-                        service: service,
-                        parent: parent,
-                        viewParent: viewParent,
-                        dependencies: dependencies
-                    });
-                }
-            }
-        };
+        return di.register;
     }
+
+    function register(serviceName, filesToBeLoaded, fn) {
+        var names = serviceName.split(':');
+        var funcName = names[0].trim();
+        var parent = null;
+
+        if (names.length > 1) {
+            parent = names[1].trim();
+        }
+
+        var service = fn && fn.splice(fn.length - 1, 1)[0],
+            dependencies = fn;
+
+        if (!container.has(funcName)) {
+            container.set(funcName, {
+                service: service,
+                parent: parent,
+                viewParent: null,
+                dependencies: dependencies
+            });
+        } else {
+            //comes here to override or register the callbak
+            var registeredItem = container.get(funcName);
+            if (service)
+                registeredItem.service = service;
+            if (parent)
+                registeredItem.parent = parent;
+            if (dependencies)
+                registeredItem.dependencies = dependencies;
+        }
+
+    };
 
 })(window);
 
 //di
-function IoC(container) {
+function IoC(container, register) {
     var viewParentCache = []; // this should be clear after route change
 
     function getInstance(funcName) {
+        // ToDo: have to think for lazy loaded controllers
         if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
         var referenedFunc = container.get(funcName);
 
@@ -118,6 +128,7 @@ function IoC(container) {
         return instance;
     }
 
+    this.register = register;
 
     this.get = function (name) {
         return {
@@ -139,9 +150,7 @@ function tControllerCompile(di, container) {
         if (controllers.hasOwnProperty(key)) {
             var element = controllers[key];
 
-            
-            buildParentalRelation(container, controllers, 0, 0);
-
+            buildParentalRelation(di, container, controllers, 0, 0);
 
             var ctrlName = element.getAttribute('t-controller');
             var button = element.querySelector('[t-click]');
@@ -150,7 +159,7 @@ function tControllerCompile(di, container) {
     }
 }
 
-function buildParentalRelation(container, controllers, currentIdx, nextIdx) {
+function buildParentalRelation(di, container, controllers, currentIdx, nextIdx) {
     nextIdx++;
     if (nextIdx > controllers.length) {
         currentIdx++;
@@ -166,15 +175,22 @@ function buildParentalRelation(container, controllers, currentIdx, nextIdx) {
 
     if (parent.contains(child)) {
         var parentCtrlName = getControllerName(parent),
-            registeredParent = container.get(parentCtrlName),
-            childCtrlName = getControllerName(child),
-            registeredChild = container.get(childCtrlName);
+            childCtrlName = getControllerName(child);
+
+        if (!container.has(parentCtrlName))
+            di.register(parentCtrlName);
+
+        if (!container.has(childCtrlName))
+            di.register(childCtrlName);
+
+        var registeredChild = container.get(childCtrlName),
+        registeredParent = container.get(parentCtrlName);
 
         registeredParent.viewParent = parentCtrlName;
         registeredChild.parent = parentCtrlName;
     }
 
-    buildParentalRelation(container, controllers, currentIdx, nextIdx)
+    buildParentalRelation(di, container, controllers, currentIdx, nextIdx);
 }
 
 function getControllerName(elm) {
@@ -185,7 +201,7 @@ function bindEvents(di, ctrlName, button) {
     (function (localCtrlName, localButton) {
         var lCtrlName = localCtrlName, lbtn = localButton;
         var ctrlObj = di.get(lCtrlName).then(function (obj) {
-            lbtn.onclick = obj['onclick'];
+            lbtn.addEventListener('click', obj['onclick'].bind(obj), false);
             console.log(obj);
         });
     })(ctrlName, button);
