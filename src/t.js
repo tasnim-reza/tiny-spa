@@ -19,7 +19,7 @@
     tLoad();
 
     //compile
-    tControllerCompile(di);
+    tControllerCompile(di, container);
 
     function namespace(name) {
         var self = this,
@@ -133,13 +133,15 @@ function IoC(container) {
 
 //directives
 
-function tControllerCompile(di) {
+function tControllerCompile(di, container) {
     var controllers = document.body.querySelectorAll('[t-controller]');
     for (var key in controllers) {
         if (controllers.hasOwnProperty(key)) {
             var element = controllers[key];
 
-            //element.hasChildNodes[parseInt(key)]
+            
+            buildParentalRelation(container, controllers, 0, 0);
+
 
             var ctrlName = element.getAttribute('t-controller');
             var button = element.querySelector('[t-click]');
@@ -147,6 +149,38 @@ function tControllerCompile(di) {
         }
     }
 }
+
+function buildParentalRelation(container, controllers, currentIdx, nextIdx) {
+    nextIdx++;
+    if (nextIdx > controllers.length) {
+        currentIdx++;
+        nextIdx = currentIdx + 1;
+    }
+
+    if (controllers.length === currentIdx) {
+        return;
+    }
+
+    var parent = controllers[currentIdx],
+        child = controllers[nextIdx];
+
+    if (parent.contains(child)) {
+        var parentCtrlName = getControllerName(parent),
+            registeredParent = container.get(parentCtrlName),
+            childCtrlName = getControllerName(child),
+            registeredChild = container.get(childCtrlName);
+
+        registeredParent.viewParent = parentCtrlName;
+        registeredChild.parent = parentCtrlName;
+    }
+
+    buildParentalRelation(container, controllers, currentIdx, nextIdx)
+}
+
+function getControllerName(elm) {
+    return elm.getAttribute('t-controller');
+}
+
 function bindEvents(di, ctrlName, button) {
     (function (localCtrlName, localButton) {
         var lCtrlName = localCtrlName, lbtn = localButton;
