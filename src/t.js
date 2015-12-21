@@ -95,15 +95,17 @@ function IoC(container, register) {
     function getInstance(funcName) {
         // ToDo: have to think for lazy loaded controllers
         if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
+
+
+        if (viewParentCache[funcName])
+            return viewParentCache[funcName];
+
         var referenedFunc = container.get(funcName);
 
         if (referenedFunc.parent) {
             var parentInstance = getInstance(referenedFunc.parent);
             referenedFunc.service.prototype = parentInstance;
         }
-
-        if (viewParentCache[funcName])
-            return viewParentCache[funcName];
 
         var instance = Object.create(referenedFunc.service.prototype);
         var actualInstance = createInstance(referenedFunc.service, instance, referenedFunc.dependencies);
@@ -201,7 +203,8 @@ function bindEvents(di, ctrlName, button) {
     (function (localCtrlName, localButton) {
         var lCtrlName = localCtrlName, lbtn = localButton;
         var ctrlObj = di.get(lCtrlName).then(function (obj) {
-            lbtn.addEventListener('click', obj['onclick'].bind(obj), false);
+            var bounded = obj['onclick'].bind(obj);
+            lbtn.addEventListener('click', bounded, false);
             console.log(obj);
         });
     })(ctrlName, button);
