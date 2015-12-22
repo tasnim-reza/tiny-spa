@@ -23,7 +23,7 @@
         <button t-click="onclick">on click A</button>
 
     </div>
-    
+
     <div t-controller="controllerB">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
@@ -36,7 +36,7 @@
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
         <button t-click="onclick">on click C</button>
-    </div>-->
+    </div>
 
     <hr />
     <div t-controller="controllerD">
@@ -50,21 +50,29 @@
             <input type="text" t-model="myModel" />
             <label t-bind="myModel"></label>
             <button t-click="onclick">on click E</button>
+
+            <div t-controller="controllerF">
+                <input type="text" t-twoway-model="myModel" />
+                <input type="text" t-model="myModel" />
+                <label t-bind="myModel"></label>
+                <button t-click="onclick">on click F</button>
+            </div>
+
         </div>
 
-        <div t-controller="controllerF">
+        <div t-controller="controllerG">
             <input type="text" t-twoway-model="myModel" />
             <input type="text" t-model="myModel" />
             <label t-bind="myModel"></label>
-            <button t-click="onclick">on click F</button>
+            <button t-click="onclick">on click G</button>
         </div>
     </div>
     <hr />
-    <!--<div t-controller="controllerG">
+    <div t-controller="controllerH">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click G</button>
+        <button t-click="onclick">on click h</button>
     </div>-->
 
     <script src="src/http-service.js"></script>
@@ -76,13 +84,16 @@
 
 
 
-    <!--<div ng-app="myApp">
-        <div ng-controller="myCtrl">
+    <div ng-app="myApp">
+        <div ng-controller="myParentCtrl">
             {{msg}}
             <a href="javascript:void(0)" ng-click="onclick()">on click</a>
+            <div ng-controller="myChildCtrl">
+                
+            </div>
         </div>
     </div>
     <script src="lib/angular.js"></script>
-    <script src="src/test-ang-app.js"></script>-->
+    <script src="src/test-ang-app.js"></script>
 </body>
 </html>

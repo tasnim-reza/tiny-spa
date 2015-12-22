@@ -6,7 +6,7 @@ var ns = window.namespace('myApp');
 //    .dependencies()
 //    .callbacks();
 
-/*
+
 //basic inheritance example
 ns('parentControllerB', [], ['serviceA', function parentControllerB(serviceA) {
     console.log('parentControllerB loaded');
@@ -14,8 +14,11 @@ ns('parentControllerB', [], ['serviceA', function parentControllerB(serviceA) {
     this.baseB = function () {
         serviceA.sayA();
         console.log('parent controller B base method called');
+
+
     }
 
+    //this.invokeChild('methodName', params);
 }]);
 
 ns('parentControllerA : parentControllerB', [], ['serviceA', function parentControllerA(serviceA) {
@@ -27,6 +30,13 @@ ns('parentControllerA : parentControllerB', [], ['serviceA', function parentCont
         this.baseB();
     }
 
+    //this.childListener('methodName', handler);
+
+    function handler(params) {
+
+    }
+
+    this.invokeParent('parentMethodName', params);
 }]);
 
 ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serviceC) {
@@ -58,7 +68,7 @@ ns('controllerC', [], ['serviceC', function controllerB(serviceC) {
 }]);
 //end inheritance example
 
-*/
+
 
 //view parent example
 ns('parentController', [], [function parentControllerView(serviceC) {
@@ -85,7 +95,7 @@ ns('controllerD : parentController', [], [function controllerD(serviceC) {
     //serviceC.sayC();
 }]);
 
-ns('controllerE', [], [function controllerE(serviceC) {
+ns('controllerE', [], ['serviceC', function controllerE(serviceC) {
 
     this.name = 'controller e';
 
@@ -94,6 +104,10 @@ ns('controllerE', [], [function controllerE(serviceC) {
         this.base();
     }
     //serviceC.sayC();
+
+    this.saye = function () {
+        console.log('said say e');
+    }
 }]);
 
 ns('controllerF', [], ['serviceC', function controllerF(serviceC) {
@@ -101,19 +115,28 @@ ns('controllerF', [], ['serviceC', function controllerF(serviceC) {
 
     this.onclick = function () {
         console.log('fired, on click  from controller F : ' + this.getCounter());
+
+        this.saye();
     }
     //serviceC.sayC();
 }]);
-//end view parent example
 
-/*
 ns('controllerG', [], ['serviceC', function controllerG(serviceC) {
     this.onclick = function () {
         console.log('fired, on click  from controller G');
     }
     serviceC.sayC();
 }]);
-*/
+//end view parent example
+
+ns('controllerH', [], ['serviceC', function controllerG(serviceC) {
+    this.onclick = function () {
+        console.log('fired, on click  from controller G');
+    }
+    serviceC.sayC();
+}]);
+
+
 
 ns('serviceC', [], ['serviceA', 'serviceB', function serviceC(serviceA, serviceB) {
     this.sayC = function () {
@@ -140,17 +163,19 @@ ns('serviceB', [], [function serviceB() {
 
 function funcB() {
     this.name = 'func b';
-    this.counter = 0;
+    this.counter = {
+        value: 0
+    };
     this.say1 = function () {
-        console.log('function b parent ', this.counter);
+        console.log('function b parent ', this.counter.value);
     }
 }
 
 function funcA() {
     this.name = 'func a';
     this.say = function () {
-        this.counter++;
-        console.log('function a child ', this.counter);
+        this.counter.value++;
+        console.log('function a child ', this.counter.value);
     }
 
 }
@@ -170,25 +195,6 @@ funcA.apply(objA, []);
 objA.say1();
 objA.say();
 objA.say1();
-
-//var boundedSay = objA.say.bind(objA);
-
-//var boundedSay1 = objA.say1.bind(objA);
-
-
-//boundedSay1();
-//boundedSay();
-
-//boundedSay1();
-//boundedSay();
-
-//boundedSay1();
-//boundedSay();
-
-//boundedSay1();
-//boundedSay();
-
-//boundedSay1();
 
 
 

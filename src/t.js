@@ -143,7 +143,6 @@ function IoC(container, register) {
     }
 }
 
-
 //directives
 
 function tControllerCompile(di, container) {
@@ -162,6 +161,7 @@ function tControllerCompile(di, container) {
 }
 
 function buildParentalRelation(di, container, controllers, currentIdx, nextIdx) {
+    //todo - need to handle circular dependency
     nextIdx++;
     if (nextIdx > controllers.length) {
         currentIdx++;
