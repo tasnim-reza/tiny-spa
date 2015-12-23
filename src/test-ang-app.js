@@ -26,20 +26,26 @@ function myParentCtrl(
 
     $scope.msg = 'my msg';
     $scope.$broadcast('fromParent');
+
     $scope.onclick = function () {
         //var myService2Obj = $injector.invoke(['myService']);
         console.log(app);
         $scope.$broadcast('fromParent', 1);
+
     }
-
-    //var parentObj = Object.create(this.prototype);
-
-    //parentCtrl.apply(parentObj, []);
-
-    //this.say();
-
-
+    $scope.$on('fromParent', function (evt, d) {
+        console.log('from parent');
+    });
 }
+
+app.controller('myParentCtrl1', ['$scope', function myChildCtrl($scope) {
+        console.log('child loaded');
+
+        $scope.$on('fromParent', function (evt, d) {
+            console.log('from parent');
+        });
+    }
+]);
 
 app.controller('myChildCtrl', [
     '$scope',
@@ -49,9 +55,16 @@ app.controller('myChildCtrl', [
     function myChildCtrl($scope) {
         console.log('child loaded');
 
-        $scope.$on('fromParent', function (evt, d) {
-            console.log('from parent');
-        });
+        $scope.onclick = function () {
+            //var myService2Obj = $injector.invoke(['myService']);
+            console.log(app);
+            $scope.$emit('fromParent', 1);
+
+        }
+
+        //$scope.$on('fromParent', function (evt, d) {
+        //    console.log('from parent');
+        //});
     }
 ]);
 

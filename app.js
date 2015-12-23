@@ -18,7 +18,7 @@ ns('parentControllerB', [], ['serviceA', function parentControllerB(serviceA) {
 
     }
 
-    //this.invokeChild('methodName', params);
+    //
 }]);
 
 ns('parentControllerA : parentControllerB', [], ['serviceA', function parentControllerA(serviceA) {
@@ -28,6 +28,8 @@ ns('parentControllerA : parentControllerB', [], ['serviceA', function parentCont
         serviceA.sayA();
         console.log('parent controller A base method called');
         this.baseB();
+
+        //this.invokeChild('methodName', params);
     }
 
     //this.childListener('methodName', handler);
@@ -36,7 +38,8 @@ ns('parentControllerA : parentControllerB', [], ['serviceA', function parentCont
 
     }
 
-    this.invokeParent('parentMethodName', params);
+    //this.invokeParent('parentMethodName', params);
+
 }]);
 
 ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serviceC) {
@@ -51,6 +54,8 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
         console.log('fired, on click from controller A');
         self.baseA();
     }
+
+
 }]);
 
 ns('controllerB', [], ['serviceC', function controllerB(serviceC) {
@@ -160,41 +165,91 @@ ns('serviceB', [], [function serviceB() {
 }]);
 
 
+function base() {
+    this.invokeParent = function (funcName, arg) {
+        invoke.call(this, funcName, arg);
+    }
 
-function funcB() {
+    this.invokeChild = function (funcName, arg) {
+        invoke.call(this, funcName, arg);
+    }
+
+    this.invokeShibling = function () {
+
+    }
+
+    this.parentListener = function () {
+
+    }
+
+    this.childtListener = function () {
+
+    }
+
+    this.shiblingListener = function () {
+
+    }
+
+    function invoke(funcName, arg) {
+        this[funcName].apply(this, arg);
+    }
+}
+
+function parent() {
     this.name = 'func b';
+
     this.counter = {
         value: 0
     };
+
     this.say1 = function () {
         console.log('function b parent ', this.counter.value);
+
+        this.invokeChild('childMethod', []);
+    }
+
+    this.parentMethod = function (arg) {
+        console.log('called parent');
     }
 }
 
-function funcA() {
+function parent1() {
+    
+}
+
+function child() {
     this.name = 'func a';
     this.say = function () {
-        this.counter.value++;
-        console.log('function a child ', this.counter.value);
+        this.say1();
+
+        this.invokeParent('parentMethod', []);
     }
 
+    this.childMethod = function () {
+        console.log('called child');
+    }
 }
 
-var objB = Object.create(funcB.prototype);
+var objbase = Object.create(base.prototype);
+base.apply(objbase, []);
 
-funcB.apply(objB, []);
+parent.prototype = objbase;
 
-funcA.prototype = objB;
-funcA.prototype.constructor = funcA;
-funcA.constructor = funcB.prototype.constructor;
+var objparent = Object.create(parent.prototype);
 
-var objA = Object.create(funcA.prototype);
+parent.apply(objparent, []);
 
-funcA.apply(objA, []);
+child.prototype = objparent;
 
-objA.say1();
-objA.say();
-objA.say1();
+var objchild = Object.create(child.prototype);
+
+child.apply(objchild, []);
+
+objchild.say1();
+objchild.say();
+objchild.say1();
+
+
 
 
 
