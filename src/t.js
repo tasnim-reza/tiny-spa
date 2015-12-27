@@ -1,6 +1,6 @@
-﻿(function bootstrap(window) {
+﻿(function bootstrap(window, document) {
     
-    var di = new IoC(register);
+    var dResolver = createDepedencyResolver();
     
     loadViewBasedOnHash();
 
@@ -9,7 +9,7 @@
     };
 
     //di
-    function IoC(register) {
+    function createDepedencyResolver() {
         var container = new Map();
         var viewParentCache = []; // this should be clear after route change
 
@@ -51,9 +51,39 @@
             return instance;
         }
 
-        this.register = register;
+        function register(serviceName, filesToBeLoaded, fn) {
+            var names = serviceName.split(':');
+            var funcName = names[0].trim();
+            var parent = null;
 
-        this.get = function (name) {
+            if (names.length > 1) {
+                parent = names[1].trim();
+            }
+
+            var service = fn && fn.splice(fn.length - 1, 1)[0],
+                dependencies = fn;
+
+            if (!container.has(funcName)) {
+                container.set(funcName, {
+                    service: service,
+                    parent: parent,
+                    viewParent: null,
+                    dependencies: dependencies
+                });
+            } else {
+                //comes here to override or register the callbak
+                var registeredItem = container.get(funcName);
+                if (service)
+                    registeredItem.service = service;
+                if (parent)
+                    registeredItem.parent = parent;
+                if (dependencies)
+                    registeredItem.dependencies = dependencies;
+            }
+
+        };
+
+        function get(name) {
             return {
                 then: function then(callback) {
                     setTimeout(function () {
@@ -62,75 +92,57 @@
                 }
             };
         }
+
+        function namespace(name) {
+            var self = this,
+                ns = name;
+
+
+            //var register = {
+            //    controller: function () {
+
+            //    },
+            //    parentController: function () {
+
+            //    },
+            //    viewParentController: function () {
+
+            //    },
+
+            //    service: function () {
+
+            //    },
+            //    parentService: function () {
+
+            //    },
+            //    staticService: function () {
+
+            //    },
+            //    callBack: function () {
+
+            //    }
+            //};
+
+            return register;
+        }
+
+        function exec(filesToBeLaded, dependencies) {
+            //handle files to be load
+
+
+        }
+
+        //public api
+        return {
+            namespace :namespace,
+            register: register,
+            exec: exec,
+            get: get
+        }
     }
 
     //compile
-    compile(document.body, di, container);
-
-    function namespace(name) {
-        var self = this,
-            ns = name;
-
-
-        //var register = {
-        //    controller: function () {
-
-        //    },
-        //    parentController: function () {
-
-        //    },
-        //    viewParentController: function () {
-
-        //    },
-
-        //    service: function () {
-
-        //    },
-        //    parentService: function () {
-
-        //    },
-        //    staticService: function () {
-
-        //    },
-        //    callBack: function () {
-
-        //    }
-        //};
-
-        return di.register;
-    }
-
-    function register(serviceName, filesToBeLoaded, fn) {
-        var names = serviceName.split(':');
-        var funcName = names[0].trim();
-        var parent = null;
-
-        if (names.length > 1) {
-            parent = names[1].trim();
-        }
-
-        var service = fn && fn.splice(fn.length - 1, 1)[0],
-            dependencies = fn;
-
-        if (!container.has(funcName)) {
-            container.set(funcName, {
-                service: service,
-                parent: parent,
-                viewParent: null,
-                dependencies: dependencies
-            });
-        } else {
-            //comes here to override or register the callbak
-            var registeredItem = container.get(funcName);
-            if (service)
-                registeredItem.service = service;
-            if (parent)
-                registeredItem.parent = parent;
-            if (dependencies)
-                registeredItem.dependencies = dependencies;
-        }
-
-    };
+    dResolver.exec([], ['rootElement', 'di', compile]);
     
     function compile(elementNeedToBeCompile, di, container) {
         
@@ -269,4 +281,4 @@
     window.t = {
         namespace : namespace
     };
-})(window);
+})(window, document);

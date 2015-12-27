@@ -1,4 +1,4 @@
-var ns = window.namespace('myApp');
+var ns = window.t.namespace('myApp');
 //ns
 //    .name() //controller, service, asStaticService, 
 //    .parent() //.asViewParent()
