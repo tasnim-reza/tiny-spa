@@ -1,4 +1,4 @@
-var ns = window.t.namespace('myApp');
+var ns = ts.namespace('myApp');
 //ns
 //    .name() //controller, service, asStaticService, 
 //    .parent() //.asViewParent()
@@ -248,11 +248,6 @@ child.apply(objchild, []);
 objchild.say1();
 objchild.say();
 objchild.say1();
-
-
-
-
-
 
 
 

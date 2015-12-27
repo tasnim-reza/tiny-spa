@@ -11,13 +11,15 @@
     //di
     function createDepedencyResolver() {
         var container = new Map();
+        var staticInstance = new Map();
         var viewParentCache = []; // this should be clear after route change
-
+              
         function getInstance(funcName) {
+            if(staticInstance.has(funcName)) return staticInstance.get(funcName);
+
             // ToDo: have to think for lazy loaded controllers
             if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
-
-
+            
             if (viewParentCache[funcName])
                 return viewParentCache[funcName];
 
@@ -80,7 +82,6 @@
                 if (dependencies)
                     registeredItem.dependencies = dependencies;
             }
-
         };
 
         function get(name) {
@@ -126,19 +127,34 @@
             return register;
         }
 
-        function exec(filesToBeLaded, dependencies) {
+        function exec(filesToBeLaded, fn) {
             //handle files to be load
 
+            var service = fn && fn.splice(fn.length - 1, 1)[0],
+                dependencies = fn,
+                arg=[];
 
+            dependencies.forEach(function(fnName){
+                arg.push(getInstance(fnName));
+            });
+            var instance = Object.create(service.prototype);
+            service.apply(instance, arg);
         }
 
         //public api
-        return {
+        var di = {
             namespace :namespace,
             register: register,
             exec: exec,
             get: get
-        }
+        };
+        
+        //registerStaticAndNativeServices
+        staticInstance.set('rootElement', document.body);
+        staticInstance.set('di', di);
+        staticInstance.set('container', container);
+
+        return di;
     }
 
     //compile
@@ -266,7 +282,7 @@
     function loadTemplate(element, templateUrl) {
         new templateLoaderService(templateUrl, function (evt) {
             element.innerHTML = evt;
-            compile(element,);
+            //compile(element,);
             //element.addEventListener('onload', function () {
             //    console.log('onload');
             //    element.removeEventListener('onload');
@@ -275,10 +291,9 @@
             console.log('error', evt);
         });
     }
-
-
+    
     //public api
-    window.t = {
-        namespace : namespace
+    window.ts = {
+        namespace : dResolver.namespace
     };
 })(window, document);
