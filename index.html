@@ -15,13 +15,12 @@
     <div t-load="templates/footer"></div>
 
     <div t-view></div>
-
+    
     <div t-controller="controllerA">
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
         <button t-click="onclick">on click A</button>
-
     </div>
 
     <div t-controller="controllerB">
@@ -32,14 +31,16 @@
     </div>
 
     <div t-controller="controllerC">
+        <h2>controller c</h2>
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
-        <button t-click="onclick">on click C</button>
+        <button t-bind onclick="say()">on click C</button>
     </div>
 
     <hr />
     <div t-controller="controllerD">
+        <h2>controller d</h2>
         <input type="text" t-twoway-model="myModel" />
         <input type="text" t-model="myModel" />
         <label t-bind="myModel"></label>
@@ -75,12 +76,12 @@
         <button t-click="onclick">on click h</button>
     </div>
 
-    <script src="src/http-service.js" async></script>
-    <script src="src/template-loader-service.js" async></script>
-    <script src="src/t.js" async></script>
+    <script src="src/http-service.js" ></script>
+    <script src="src/template-loader-service.js" ></script>
+    <script src="src/t.js"></script>
 
     <!--<script src="src/JavaScript.js"></script>-->
-    <script src="app.js"></script>
+    <script src="app.js" async></script>
 
 
 

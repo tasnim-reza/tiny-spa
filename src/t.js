@@ -1,7 +1,7 @@
 ﻿(function bootstrap(window, document) {
-    
+
     var dResolver = createDepedencyResolver();
-    
+
     loadViewBasedOnHash();
 
     window.onhashchange = function (url) {
@@ -13,13 +13,13 @@
         var container = new Map();
         var staticInstance = new Map();
         var viewParentCache = []; // this should be clear after route change
-              
+
         function getInstance(funcName) {
-            if(staticInstance.has(funcName)) return staticInstance.get(funcName);
+            if (staticInstance.has(funcName)) return staticInstance.get(funcName);
 
             // ToDo: have to think for lazy loaded controllers
             if (!container.has(funcName)) throw (funcName + ' Not found in container, please register first.');
-            
+
             if (viewParentCache[funcName])
                 return viewParentCache[funcName];
 
@@ -84,7 +84,7 @@
             }
         };
 
-        function get(name) {
+        function getAsync(name) {
             return {
                 then: function then(callback) {
                     setTimeout(function () {
@@ -92,6 +92,15 @@
                     });
                 }
             };
+        }
+
+        //get registered item not necessary item is already instantiated
+        function getItem(name) {
+            return container.get(name);
+        }
+
+        function hasRegistered(name) {
+            return container.has(name);
         }
 
         function namespace(name) {
@@ -132,9 +141,9 @@
 
             var service = fn && fn.splice(fn.length - 1, 1)[0],
                 dependencies = fn,
-                arg=[];
+                arg = [];
 
-            dependencies.forEach(function(fnName){
+            dependencies.forEach(function (fnName) {
                 arg.push(getInstance(fnName));
             });
             var instance = Object.create(service.prototype);
@@ -143,12 +152,15 @@
 
         //public api
         var di = {
-            namespace :namespace,
+            namespace: namespace,
             register: register,
             exec: exec,
-            get: get
+            getAsync: getAsync,
+            get: getInstance,
+            getItem: getItem,
+            hasRegistered: hasRegistered
         };
-        
+
         //registerStaticAndNativeServices
         staticInstance.set('rootElement', document.body);
         staticInstance.set('di', di);
@@ -159,9 +171,9 @@
 
     //compile
     dResolver.exec([], ['rootElement', 'di', compile]);
-    
-    function compile(elementNeedToBeCompile, di, container) {
-        
+
+    function compile(elementNeedToBeCompile, di) {
+
         //template load based on anchor/other element click t-route
         tRoute();
 
@@ -169,22 +181,21 @@
         tLoad();
 
         tController();
-        
+
         function tController() {
             var controllers = elementNeedToBeCompile.querySelectorAll('[t-controller]');
             for (var key in controllers) {
                 if (controllers.hasOwnProperty(key)) {
                     var element = controllers[key];
 
-                    buildParentalRelation(di, container, controllers, 0, 0);
+                    buildParentalRelation(di, controllers, 0, 0);
 
                     var ctrlName = element.getAttribute('t-controller');
-                    var button = element.querySelector('[t-click]');
-                    bindEvents(di, ctrlName, button);
+                    bindEvents(di, ctrlName);
                 }
             }
 
-            function buildParentalRelation(di, container, controllers, currentIdx, nextIdx) {
+            function buildParentalRelation(di, controllers, currentIdx, nextIdx) {
                 //todo - need to handle circular dependency
                 nextIdx++;
                 if (nextIdx > controllers.length) {
@@ -203,38 +214,43 @@
                     var parentCtrlName = getControllerName(parent),
                         childCtrlName = getControllerName(child);
 
-                    if (!container.has(parentCtrlName))
+                    if (!di.hasRegistered(parentCtrlName))
                         di.register(parentCtrlName);
 
-                    if (!container.has(childCtrlName))
+                    if (!di.hasRegistered(childCtrlName))
                         di.register(childCtrlName);
 
-                    var registeredChild = container.get(childCtrlName),
-                    registeredParent = container.get(parentCtrlName);
+                    var registeredChild = di.getItem(childCtrlName),
+                    registeredParent = di.getItem(parentCtrlName);
 
                     registeredParent.viewParent = parentCtrlName;
                     registeredChild.parent = parentCtrlName;
                 }
 
-                buildParentalRelation(di, container, controllers, currentIdx, nextIdx);
+                buildParentalRelation(di, controllers, currentIdx, nextIdx);
             }
 
             function getControllerName(elm) {
                 return elm.getAttribute('t-controller');
             }
 
-            function bindEvents(di, ctrlName, button) {
-                (function (localCtrlName, localButton) {
-                    var lCtrlName = localCtrlName, lbtn = localButton;
-                    var ctrlObj = di.get(lCtrlName).then(function (obj) {
+            function bindEvents(di, ctrlName) {
+                //var button = element.querySelector('[t-click]');
+                var tBind = element.querySelector('[t-bind]');
+
+                (function (localCtrlName, localTbind) {
+                    var lCtrlName = localCtrlName, lbtn = localTbind;
+                    var ctrlObj = di.getAsync(lCtrlName).then(function (obj) {
+
                         var bounded = obj['onclick'].bind(obj);
+
                         lbtn.addEventListener('click', bounded, false);
                         console.log(obj);
                     });
-                })(ctrlName, button);
+                })(ctrlName, tBind);
             }
         }
-        
+
         function tRoute() {
             var routers = document.body.querySelectorAll('[t-route]');
             for (var key in routers) {
@@ -264,7 +280,7 @@
             };
         }
     }
-    
+
     function loadViewBasedOnHash() {
         if (location.hash) {
             var templateUrl = location.hash.split('/')[1];
@@ -291,9 +307,7 @@
             console.log('error', evt);
         });
     }
-    
+
     //public api
-    window.ts = {
-        namespace : dResolver.namespace
-    };
+    window.ts = dResolver;
 })(window, document);
