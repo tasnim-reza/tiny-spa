@@ -190,8 +190,7 @@
 
                     buildParentalRelation(di, controllers, 0, 0);
 
-                    var ctrlName = element.getAttribute('t-controller');
-                    bindEvents(di, ctrlName);
+                    bindEvents(di, element);
                 }
             }
 
@@ -234,20 +233,34 @@
                 return elm.getAttribute('t-controller');
             }
 
-            function bindEvents(di, ctrlName) {
-                //var button = element.querySelector('[t-click]');
-                var tBind = element.querySelector('[t-bind]');
+            function bindEvents(di, ctrlEl) {
+                var ctrlName = ctrlEl.getAttribute('t-controller');
+                var tBind = ctrlEl.querySelectorAll('[t-bind]');
+                for (var key in tBind) {
+                    var elm = tBind[key];
+                    var attrs = elm.attributes;
+                    console.log(attrs);
 
-                (function (localCtrlName, localTbind) {
-                    var lCtrlName = localCtrlName, lbtn = localTbind;
-                    var ctrlObj = di.getAsync(lCtrlName).then(function (obj) {
+                    (function (localCtrlName, localAttrs, localTbind) {
+                        var lCtrlName = localCtrlName,
+                            lbtn = localTbind,
+                            lattrs = localAttrs;
 
-                        var bounded = obj['onclick'].bind(obj);
+                        if (lattrs && lattrs['onclick']) {
+                            var onclick = lattrs['onclick'];
+                            var controll = onclick.ownerElement;
+                            var fn = controll.getAttribute('onclick');
 
-                        lbtn.addEventListener('click', bounded, false);
-                        console.log(obj);
-                    });
-                })(ctrlName, tBind);
+                            var ctrlObj = di.getAsync(lCtrlName).then(function (obj) {
+
+                                var bounded = obj['onclick'].bind(obj);
+
+                                controll.addEventListener('click', bounded, false);
+                                console.log(obj);
+                            });
+                        }
+                    })(ctrlName, attrs, tBind);
+                };
             }
         }
 

@@ -15,12 +15,14 @@
     <div t-load="templates/footer"></div>
 
     <div t-view></div>
-    
+
     <div t-controller="controllerA">
-        <input type="text" t-twoway-model="myModel" />
-        <input type="text" t-model="myModel" />
-        <label t-bind="myModel"></label>
-        <button t-click="onclick">on click A</button>
+        <form name="myForm">
+            <input name="name" type="text" t-twoway-model="myModel" />
+            <input name="institute" type="text" t-model="myModel" />
+            <!--<label t-bind="myModel"></label>-->
+            <button t-bind onclick="say('a','b')">on click A</button>
+        </form>
     </div>
 
     <div t-controller="controllerB">
@@ -76,28 +78,31 @@
         <button t-click="onclick">on click h</button>
     </div>
 
-    <script src="src/http-service.js" ></script>
-    <script src="src/template-loader-service.js" ></script>
+    <!--<script src="lib/jquery-2.1.4.js"></script>-->
+
+    <script src="src/http-service.js"></script>
+    <script src="src/template-loader-service.js"></script>
     <script src="src/t.js"></script>
 
-    <!--<script src="src/JavaScript.js"></script>-->
-    <script src="app.js" async></script>
+    <script src="app.js"></script>
 
 
 
     <!--<div ng-app="myApp">
-        <div ng-controller="myParentCtrl">
-            {{msg}}
-            <a href="javascript:void(0)" ng-click="onclick()">parent click</a>
-            <div ng-controller="myParentCtrl1">
-                
-                <div ng-controller="myChildCtrl">
-                    <a href="javascript:void(0)" ng-click="onclick()">child click</a>
+            <div ng-controller="myParentCtrl">
+                {{msg}}
+                <a href="javascript:void(0)" ng-click="onclick()">parent click</a>
+                <div ng-controller="myParentCtrl1">
+
+                    <div ng-controller="myChildCtrl">
+                        <a href="javascript:void(0)" ng-click="onclick()">child click</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="lib/angular.js"></script>
-    <script src="src/test-ang-app.js"></script>-->
+        <script src="lib/angular.js"></script>
+        <script src="src/test-ang-app.js"></script>-->
+    <!--<a href="#" id="testd">call</a>
+    <a href="#" id="modifier">modify</a>-->
 </body>
 </html>

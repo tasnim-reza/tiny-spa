@@ -1,4 +1,3 @@
-console.log('foo');
 var ns = ts.namespace('myApp');
 //ns
 //    .name() //controller, service, asStaticService, 
@@ -47,15 +46,20 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
     var self = this;
     console.log('controller a loaded');
 
+    this.msg = "test message";
+
     serviceC.sayC();
 
     this.baseA();
 
-    this.onclick = function () {
+    this.onclick = function (msg, c) {
         console.log('fired, on click from controller A');
         self.baseA();
     }
 
+    this.say = function (a, b) {
+        console.log('called from ui');
+    }
 
 }]);
 
@@ -215,7 +219,7 @@ function parent() {
 }
 
 function parent1() {
-    
+
 }
 
 function child() {
@@ -249,3 +253,16 @@ child.apply(objchild, []);
 objchild.say1();
 objchild.say();
 objchild.say1();
+
+
+/*
+$(document).ready(function () {
+    $('body').on('click', '#testd', function (e) {
+        console.log('call');
+    });
+
+    $('#modifier').bind('click', function () {
+        $('#testd').wrap('<div></div>');
+    });
+});
+*/
