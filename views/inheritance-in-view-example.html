@@ -1,0 +1,30 @@
+﻿<h1> Inheritance example from view </h1>
+<div t-controller="controllerD">
+    <h2>controller d</h2>
+    <input type="text" t-twoway-model="myModel" />
+    <input type="text" t-model="myModel" />
+    <label t-bind="myModel"></label>
+    <button t-click="onclick">on click D</button>
+
+    <div t-controller="controllerE">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+        <button t-click="onclick">on click E</button>
+
+        <div t-controller="controllerF">
+            <input type="text" t-twoway-model="myModel" />
+            <input type="text" t-model="myModel" />
+            <label t-bind="myModel"></label>
+            <button t-click="onclick">on click F</button>
+        </div>
+
+    </div>
+
+    <div t-controller="controllerG">
+        <input type="text" t-twoway-model="myModel" />
+        <input type="text" t-model="myModel" />
+        <label t-bind="myModel"></label>
+        <button t-click="onclick">on click G</button>
+    </div>
+</div>

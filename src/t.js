@@ -296,15 +296,19 @@
 
     function loadViewBasedOnHash() {
         if (location.hash) {
-            var templateUrl = location.hash.split('/')[1];
-            loadView(templateUrl);
+            var token = location.hash.split('/');
+            var templateUrl = token[token.length - 1];
+            //ToDo: need to handle complex view loading
+            loadView(templateUrl, token.length > 2, token[token.length - 2]);
         } else {
             window.location.hash = '#/dashboard';
         }
     }
 
-    function loadView(templateUrl) {
-        var view = document.body.querySelector('[t-view]');
+    function loadView(templateUrl, hasParent, parentName) {
+        var selector = hasParent ? '[t-view="' + parentName + '"]' : '[t-view]';
+
+        var view = document.body.querySelector(selector);
         loadTemplate(view, 'views/' + templateUrl);
     }
 

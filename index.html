@@ -2,106 +2,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Tiny-SPA: Single Page Application Framework</title>
-    <!--<script src="lib/jquery-2.1.4.js"></script>-->
 </head>
 <body>
-    <h1 id="index">index</h1>
-
-    <h2 id="t">t</h2>
-
     <a t-route="/about" template-url="" controller-url=""><span>about</span></a>
-
     <div t-load="templates/header"></div>
-    <div t-load="templates/footer"></div>
-
     <div t-view></div>
-
-    <div t-controller="controllerA">
-        <form name="myForm">
-            <input name="name" type="text" t-twoway-model="myModel" />
-            <input name="institute" type="text" t-model="myModel" />
-            <!--<label t-bind="myModel"></label>-->
-            <button t-bind onclick="say('a','b')">on click A</button>
-        </form>
-    </div>
-
-    <div t-controller="controllerB">
-        <input type="text" t-twoway-model="myModel" />
-        <input type="text" t-model="myModel" />
-        <label t-bind="myModel"></label>
-        <button t-click="onclick">on click B</button>
-    </div>
-
-    <div t-controller="controllerC">
-        <h2>controller c</h2>
-        <input type="text" t-twoway-model="myModel" />
-        <input type="text" t-model="myModel" />
-        <label t-bind="myModel"></label>
-        <button t-bind onclick="say()">on click C</button>
-    </div>
-
-    <hr />
-    <div t-controller="controllerD">
-        <h2>controller d</h2>
-        <input type="text" t-twoway-model="myModel" />
-        <input type="text" t-model="myModel" />
-        <label t-bind="myModel"></label>
-        <button t-click="onclick">on click D</button>
-
-        <div t-controller="controllerE">
-            <input type="text" t-twoway-model="myModel" />
-            <input type="text" t-model="myModel" />
-            <label t-bind="myModel"></label>
-            <button t-click="onclick">on click E</button>
-
-            <div t-controller="controllerF">
-                <input type="text" t-twoway-model="myModel" />
-                <input type="text" t-model="myModel" />
-                <label t-bind="myModel"></label>
-                <button t-click="onclick">on click F</button>
-            </div>
-
-        </div>
-
-        <div t-controller="controllerG">
-            <input type="text" t-twoway-model="myModel" />
-            <input type="text" t-model="myModel" />
-            <label t-bind="myModel"></label>
-            <button t-click="onclick">on click G</button>
-        </div>
-    </div>
-    <hr />
-    <div t-controller="controllerH">
-        <input type="text" t-twoway-model="myModel" />
-        <input type="text" t-model="myModel" />
-        <label t-bind="myModel"></label>
-        <button t-click="onclick">on click h</button>
-    </div>
+    <div t-load="templates/footer"></div>
+    
+    <!--script loading-->
 
     <!--<script src="lib/jquery-2.1.4.js"></script>-->
 
     <script src="src/http-service.js"></script>
     <script src="src/template-loader-service.js"></script>
     <script src="src/t.js"></script>
-
     <script src="app.js"></script>
 
 
 
     <!--<div ng-app="myApp">
-            <div ng-controller="myParentCtrl">
-                {{msg}}
-                <a href="javascript:void(0)" ng-click="onclick()">parent click</a>
-                <div ng-controller="myParentCtrl1">
+        <div ng-controller="myParentCtrl">
+            {{msg}}
+            <a href="javascript:void(0)" ng-click="onclick()">parent click</a>
+            <div ng-controller="myParentCtrl1">
 
-                    <div ng-controller="myChildCtrl">
-                        <a href="javascript:void(0)" ng-click="onclick()">child click</a>
-                    </div>
+                <div ng-controller="myChildCtrl">
+                    <a href="javascript:void(0)" ng-click="onclick('a', 'b')">child click</a>
                 </div>
             </div>
         </div>
-        <script src="lib/angular.js"></script>
-        <script src="src/test-ang-app.js"></script>-->
+    </div>
+    <script src="lib/angular.js"></script>
+    <script src="src/test-ang-app.js"></script>-->
+
     <!--<a href="#" id="testd">call</a>
     <a href="#" id="modifier">modify</a>-->
 </body>

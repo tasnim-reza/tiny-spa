@@ -39,12 +39,12 @@ function myParentCtrl(
 }
 
 app.controller('myParentCtrl1', ['$scope', function myChildCtrl($scope) {
-        console.log('child loaded');
+    console.log('child loaded');
 
-        $scope.$on('fromParent', function (evt, d) {
-            console.log('from parent');
-        });
-    }
+    $scope.$on('fromParent', function (evt, d) {
+        console.log('from parent');
+    });
+}
 ]);
 
 app.controller('myChildCtrl', [
@@ -55,7 +55,7 @@ app.controller('myChildCtrl', [
     function myChildCtrl($scope) {
         console.log('child loaded');
 
-        $scope.onclick = function () {
+        $scope.onclick = function (p1, p2) {
             //var myService2Obj = $injector.invoke(['myService']);
             console.log(app);
             $scope.$emit('fromParent', 1);

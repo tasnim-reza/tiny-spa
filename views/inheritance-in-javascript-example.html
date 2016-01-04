@@ -1,0 +1,25 @@
+﻿<h1> Javascript Inheritance example </h1>
+
+<div t-controller="controllerA">
+    <form name="myForm">
+        <input name="name" type="text" t-twoway-model="myModel" />
+        <input name="institute" type="text" t-model="myModel" />
+        <!--<label t-bind="myModel"></label>-->
+        <button t-bind onclick="say('a','b')">on click A</button>
+    </form>
+</div>
+
+<div t-controller="controllerB">
+    <input type="text" t-twoway-model="myModel" />
+    <input type="text" t-model="myModel" />
+    <label t-bind="myModel"></label>
+    <button t-click="onclick">on click B</button>
+</div>
+
+<div t-controller="controllerC">
+    <h2>controller c</h2>
+    <input type="text" t-twoway-model="myModel" />
+    <input type="text" t-model="myModel" />
+    <label t-bind="myModel"></label>
+    <button t-bind onclick="say()">on click C</button>
+</div>
