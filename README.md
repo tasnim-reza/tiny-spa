@@ -1,6 +1,8 @@
 # tiny-spa
 tiny-spa is a client side full stack application framework. #Not ready for production :(
 
+(Did not integrated with build system. So to run, simply download and host on any webserver like IIS, Apache etc. We are working to create a demo page)
+
 ### Functionality
 1. Bootstrap
 2. Routing, template loading
