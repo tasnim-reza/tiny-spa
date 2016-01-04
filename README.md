@@ -13,7 +13,7 @@ tiny-spa is a client side full stack application framework. #Not ready for produ
 7. 
 
 ### Examples
-# How to bootstrap your project ?
+## How to bootstrap your project ?
 
 ### Authors
 Javascript developer: Tasnim Reza @tasnim-reza
