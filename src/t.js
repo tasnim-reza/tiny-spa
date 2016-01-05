@@ -298,16 +298,31 @@
         if (location.hash) {
             var token = location.hash.split('/');
             var templateUrl = token[token.length - 1];
+            var hasParent = token.length > 2;
+            var selector = '[t-view]';
+
             //ToDo: need to handle complex view loading
-            loadView(templateUrl, token.length > 2, token[token.length - 2]);
+
+            if (hasParent) {
+                var parentName = token[token.length - 2];
+                var parentSelector = '[t-view="' + parentName + '"]';
+                var view = document.body.querySelector(parentSelector);
+                if (!view) {
+                    templateUrl = token[token.length - 2];
+                    loadView(templateUrl, selector);
+                } else {
+                    loadView(templateUrl, parentSelector);
+                }
+            } else {
+                loadView(templateUrl, selector);
+            }
+
         } else {
             window.location.hash = '#/dashboard';
         }
     }
 
-    function loadView(templateUrl, hasParent, parentName) {
-        var selector = hasParent ? '[t-view="' + parentName + '"]' : '[t-view]';
-
+    function loadView(templateUrl, selector) {
         var view = document.body.querySelector(selector);
         loadTemplate(view, 'views/' + templateUrl);
     }
@@ -315,6 +330,18 @@
     function loadTemplate(element, templateUrl) {
         new templateLoaderService(templateUrl, function (evt) {
             element.innerHTML = evt;
+            var scriptTags = element.querySelectorAll('script');
+
+            if (scriptTags.length > 0) {
+                var srcs = [];
+                for (var idx in scriptTags) {
+                    if (scriptTags.hasOwnProperty(idx)) {
+                        var src = scriptTags[idx].getAttribute('src');
+                        srcs.push(src);
+                    }
+                }
+                new scriptLoaderService(srcs, compile(element.innerHTML, di));
+            }
             //compile(element,);
             //element.addEventListener('onload', function () {
             //    console.log('onload');
