@@ -2,10 +2,10 @@
 
     var dResolver = createDepedencyResolver();
 
-    loadViewBasedOnHash();
+    loadViewBasedOnHash(window.location.hash, document.body, null, dResolver);
 
     window.onhashchange = function (url) {
-        loadViewBasedOnHash();
+        loadViewBasedOnHash(window.location.hash, document.body, null, dResolver);
     };
 
     //di
@@ -294,37 +294,72 @@
         }
     }
 
-    function loadViewBasedOnHash() {
-        if (location.hash) {
-            var token = location.hash.split('/');
-            var templateUrl = token[token.length - 1];
-            var hasParent = token.length > 2;
-            var selector = '[t-view]';
+    function loadViewBasedOnHash(hash, element, parentName, dResolver) {
+        if (hash) {
+            var token = hash.split('/');
+            var templateUrl = null;
 
-            //ToDo: need to handle complex view loading
+            if (token[0] === '#')
+                token.shift();
 
-            if (hasParent) {
-                var parentName = token[token.length - 2];
-                var parentSelector = '[t-view="' + parentName + '"]';
-                var view = document.body.querySelector(parentSelector);
-                if (!view) {
-                    templateUrl = token[token.length - 2];
-                    loadView(templateUrl, selector);
-                } else {
-                    loadView(templateUrl, parentSelector);
-                }
-            } else {
-                loadView(templateUrl, selector);
+            if (token[0]) {
+                templateUrl = token[0];
+                //loadView(element, templateUrl, parentName);
+                (function name(lelement, ltemplateUrl, lparentName) {
+                    var selector = lparentName ? '[t-view="' + lparentName + '"]' : '[t-view]';
+                    ltemplateUrl = 'views/' + ltemplateUrl;
+                    lelement = lelement.querySelector(selector);
+                    //check if already loaded
+
+                    new templateLoaderService(ltemplateUrl, function (evt) {
+                        lelement.innerHTML = evt;
+
+                        var scriptTags = lelement.querySelectorAll('script');
+
+                        if (scriptTags.length > 0) {
+                            var srcs = [];
+                            for (var idx in scriptTags) {
+                                if (scriptTags.hasOwnProperty(idx)) {
+                                    var src = scriptTags[idx].getAttribute('src');
+                                    srcs.push(src);
+                                }
+                            }
+
+                            //ToDo: need to check duplicate load
+                            new scriptLoaderService(srcs, function () {
+                                compile(lelement, dResolver);
+                            });
+                        } else {
+                            compile(lelement, dResolver);
+                        }
+
+
+
+
+                        //ToDo: need to handle complex view loading
+                        var hasParent = token.length > 1;
+
+                        if (hasParent) {
+                            parentName = token[0];
+                            token.shift();
+                            loadViewBasedOnHash(token.toString(), element, parentName, dResolver);
+                        }
+
+                    }, function (evt) {
+                        console.log('error', evt);
+                    });
+
+                })(element, templateUrl, parentName);
             }
-
-        } else {
+        }
+        else {
             window.location.hash = '#/dashboard';
         }
     }
 
-    function loadView(templateUrl, selector) {
-        var view = document.body.querySelector(selector);
-        loadTemplate(view, 'views/' + templateUrl);
+    function loadView(element, templateUrl, parentName) {
+
+
     }
 
     function loadTemplate(element, templateUrl) {
@@ -340,13 +375,15 @@
                         srcs.push(src);
                     }
                 }
-                new scriptLoaderService(srcs, compile(element.innerHTML, di));
+                //new scriptLoaderService(srcs, compile(element.innerHTML, di));
             }
             //compile(element,);
             //element.addEventListener('onload', function () {
             //    console.log('onload');
             //    element.removeEventListener('onload');
             //});
+
+            return element.innerHTML;
         }, function (evt) {
             console.log('error', evt);
         });

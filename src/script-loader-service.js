@@ -9,7 +9,7 @@
                 callback();
             console.log(e);
         }
-        el.async = 1;
+        el.async = 0;
         el.src = path;
         head.insertBefore(el, head.lastChild);
     });
