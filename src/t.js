@@ -250,22 +250,47 @@
                             var onclick = lattrs['onclick'];
                             var controll = onclick.ownerElement;
                             var fn = controll.getAttribute('onclick');
+                            var paramList = buildParamList(fn);
 
                             var ctrlObj = di.getAsync(lCtrlName).then(function (obj) {
 
-                                var bounded = obj['onclick'].bind(obj);
+                                //create click event
 
-                                controll.addEventListener('click', bounded, false);
+                                //if (!paramList.fnName) throw 'onclick method name not found in ' + ctrlName;
+
+                                var bounded = obj[paramList.fnName].bind(obj);
+
+                                controll.addEventListener('click', function () {
+                                    bounded.apply(paramList.params);
+                                }, false);
                                 console.log(obj);
                             });
                         }
                     })(ctrlName, attrs, tBind);
                 };
             }
+
+            function buildParamList(fn) {
+                var paramList = {
+                    fnName: '',
+                    params: ''
+                },
+                    tokens = fn.split('(');
+
+                if (tokens.length > 0) {
+                    paramList.fnName = tokens[0];
+                    tokens = tokens[1].split(')');
+                    if (tokens.length > 0) {
+                        paramList.params = tokens[0].split(',');
+                    }
+                }
+
+                return paramList;
+            }
         }
 
         function tRoute() {
-            var routers = document.body.querySelectorAll('[t-route]');
+            var routers = elementNeedToBeCompile.querySelectorAll('[t-route]');
             for (var key in routers) {
                 if (routers.hasOwnProperty(key)) {
                     var element = routers[key];
@@ -274,15 +299,15 @@
                         controllerUrl = element.getAttribute('controller-url');
                     element.setAttribute('href', '#' + url);
 
-                    element.addEventListener('onclick', function () {
-                        //setTimeout((loadTemplate)(element, templateUrl));
-                    });
+                    //element.addEventListener('onclick', function () {
+                    //    //setTimeout((loadTemplate)(element, templateUrl));
+                    //});
                 }
             }
         }
 
         function tLoad() {
-            var loaders = document.body.querySelectorAll('[t-load]');
+            var loaders = elementNeedToBeCompile.querySelectorAll('[t-load]');
 
             for (var key in loaders) {
                 if (loaders.hasOwnProperty(key)) {
