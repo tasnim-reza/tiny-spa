@@ -314,6 +314,10 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
 </div>
 ```
 
+## Localization
+
+## REST api integration
+
 ## Model mutation pipe
 
 ## Form validation
