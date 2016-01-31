@@ -303,7 +303,7 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
 </div>
 ```
 
-## Looping in `View` (work in progress)
+## Looping `for`, `for in`, `while` `do while` in `View` (work in progress)
 
 ```html
 <div t-controller="controllerA">
@@ -311,6 +311,15 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
     for(var i=0; i<mymodel.urls.length; i++)) {
         <div t-load="myModel.urls[i]"></div>
     }
+</div>
+```
+
+## Variable declaration into `View` (in progress)
+
+```html
+<div t-controller="controllerA">
+	var myName = 'Reza'
+	<label ng-bind="myName"></label>
 </div>
 ```
 
