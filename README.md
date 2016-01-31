@@ -8,8 +8,8 @@ tiny-spa is a client side full stack application framework. #Not ready for produ
 2. Routing, template loading
 3. One way, Two way data binding
 4. Dependency Injection
-	1. inheritance from JavaScript.
-	2. inheritance from view.
+	1. Inheritance from JavaScript.
+	2. Inheritance from view.
 5. Event broadcast and emit
 6. Most simple event binding.
 7. 
@@ -22,6 +22,32 @@ tiny-spa is a client side full stack application framework. #Not ready for produ
 
 ### Examples
 ## How to bootstrap your project ?
+In `html` load the library file
+```html
+<script src="src/t.js"></script>
+```
+In `javascript` define your application's name space.
+```javascript
+var ns = ts.namespace('myApp');
+```
+
+## Define Controller
+
+```html
+<div t-controller="controllerA">
+    <h3>Controller A</h3>
+    <label t-bind="msg"></label>
+</div>
+```
+
+```javascript
+ns('controllerA', [/*file dependencies*/], [function controllerA() {
+    var self = this;
+    console.log('controller a loaded');
+
+    this.msg = "Hello Tiny SPA !";    
+}]);
+```
 
 ### Authors
 Javascript developer: Tasnim Reza @tasnim-reza
