@@ -168,6 +168,164 @@ ns('controllerA : parentControllerA', [], [function controllerA() {
 }]);
 ```
 
+## Service creation
+
+```javascript
+ns('serviceA', [], [function serviceA() {
+    this.sayA = function () {
+        console.log('service a');
+    }
+}]);
+```
+
+## Dependency injection
+
+```javascript
+
+ns('serviceC', [], ['serviceA', 'serviceB', function serviceC(serviceA, serviceB) {
+    this.sayC = function () {
+        console.log('service c');
+    };
+
+    serviceA.sayA();
+    serviceB.sayB();
+}]);
+
+ns('serviceA', [], [function serviceA() {
+    this.sayA = function () {
+        console.log('service a');
+    }
+}]);
+
+ns('serviceB', [], [function serviceB() {
+    this.sayB = function () {
+        console.log('service b');
+    }
+}]);
+```
+
+## Template load
+
+```html
+<div t-load="templates/header"></div>
+```
+
+## View load
+
+```html
+<div t-view></div>
+```
+
+## Named view load with default template
+
+```html
+<div t-view="example" t-load="views/inheritance-in-view-example"></div>
+```
+
+## Route
+
+```html
+<a t-route="/about" template-url="" controller-url=""><span>about</span></a>
+
+<a href="#/example/inheritance-in-view-example" script-url="/src/example/inheritance-in-javascript-example">Previous</a>
+```
+
+## Event binding
+
+```html
+<div t-controller="controllerA">
+    <h3>Controller A</h3>
+    <form name="myForm">        
+        <button type="button" t-bind=" onclick=say('my','name') ">on click A</button>
+    </form>
+</div>
+```
+
+```javascript
+ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serviceC) {
+    this.say = function (a, b) {
+        console.log('called from ui', a, b, 'myModel: ', this.myModel);
+    }
+}]);
+```
+
+## Two way model binding
+
+```html
+<div t-controller="controllerA">
+    <h3>Controller A</h3>
+    <form name="myForm">
+        <input name="institute" type="text" t-model="myModel" placeholder="fired, after blur" />
+        <label t-model-bind="myModel"></label>
+
+        <button type="button" t-bind=" onclick=say('my','name') ">on click A</button>
+    </form>
+</div>
+```
+
+```javascript
+ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serviceC) {
+    this.say = function (a, b) {
+        console.log('called from ui', a, b, 'myModel: ', this.myModel);
+    }
+}]);
+```
+
+## Centralize event handling and model mutation
+
+## Controll statement in `View` (work in progress)
+1. `if else else if` 
+
+```html
+<div t-controller="controllerA">
+    <h3>Controller A</h3>
+    if(myModel.isEditalbe){
+    <input t-model="myModel.Name"></input>
+    }else{
+    <label t-bind="myModel.Name"></label>
+    }
+</div>
+```
+
+2. `switch`
+
+```html
+<div t-controller="controllerA">
+    <h3>Controller A</h3>
+    switch (myModel.viewSequence) {
+        case 1:
+            <div t-load="myModel.url"></div>
+        break;
+
+        default:
+            <div t-load="myModel.url"></div>    
+    }
+</div>
+```
+
+## Looping in `View` (work in progress)
+
+```html
+<div t-controller="controllerA">
+    <h3>Controller A</h3>
+    for(var i=0; i<mymodel.urls.length; i++)) {
+        <div t-load="myModel.urls[i]"></div>
+    }
+</div>
+```
+
+## Model mutation pipe
+
+## Form validation
+
+## Handling simple form without controller
+
+## Websocket integration and model mutation
+
+## Template loader service
+
+## Script loader service
+
 
 
 ### Authors
