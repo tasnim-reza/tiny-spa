@@ -339,7 +339,7 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
 
 ## Script loader service
 
-
+## Central error/exception handling
 
 ### Authors
 Javascript developer: Tasnim Reza @tasnim-reza
