@@ -14,6 +14,12 @@ tiny-spa is a client side full stack application framework. #Not ready for produ
 6. Most simple event binding.
 7. 
 
+### Services
+1. HTTP service
+2. template loader
+3. script loader
+4. initialization
+
 ### Examples
 ## How to bootstrap your project ?
 

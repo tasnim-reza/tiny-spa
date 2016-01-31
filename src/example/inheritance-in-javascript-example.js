@@ -49,7 +49,8 @@ ns('controllerA : parentControllerA', [], ['serviceC', function controllerA(serv
     }
 
     this.say = function (a, b) {
-        console.log('called from ui');
+        console.log('called from ui', a, b, 'myModel: ', this.myModel);
+
     }
 
 }]);

@@ -182,6 +182,8 @@
 
         tController();
 
+
+
         function tController() {
             var controllers = elementNeedToBeCompile.querySelectorAll('[t-controller]');
             for (var key in controllers) {
@@ -236,57 +238,91 @@
             function bindEvents(di, ctrlEl) {
                 var ctrlName = ctrlEl.getAttribute('t-controller');
                 var tBind = ctrlEl.querySelectorAll('[t-bind]');
+
                 for (var key in tBind) {
                     var elm = tBind[key];
                     var attrs = elm.attributes;
                     console.log(attrs);
 
-                    (function (localCtrlName, localAttrs, localTbind) {
+                    (function (localCtrlName, localAttrs, localTbind, localCtrlEl) {
                         var lCtrlName = localCtrlName,
                             lbtn = localTbind,
                             lattrs = localAttrs;
 
-                        if (lattrs && lattrs['onclick']) {
-                            var onclick = lattrs['onclick'];
-                            var controll = onclick.ownerElement;
-                            var fn = controll.getAttribute('onclick');
+                        if (lattrs) {
+                            var tBindVal = lattrs[0];
+                            var controll = tBindVal.ownerElement;
+                            var fn = controll.getAttribute('t-bind');
                             var paramList = buildParamList(fn);
 
+                            //find the controller object and bind associate job
                             var ctrlObj = di.getAsync(lCtrlName).then(function (obj) {
 
                                 //create click event
 
                                 //if (!paramList.fnName) throw 'onclick method name not found in ' + ctrlName;
+                                tModel(localCtrlEl, obj);
 
-                                var bounded = obj[paramList.fnName].bind(obj);
+                                var objFunc = obj[paramList.fnName];
+                                if (objFunc) {
+                                    var bounded = objFunc.bind(obj);
+                                    controll.addEventListener(paramList.eventName, function () {
+                                        bounded.apply(obj, paramList.params);
+                                    }, false);
+                                    console.log(obj);
+                                }
 
-                                controll.addEventListener('click', function () {
-                                    bounded.apply(paramList.params);
-                                }, false);
-                                console.log(obj);
                             });
                         }
-                    })(ctrlName, attrs, tBind);
+                    })(ctrlName, attrs, tBind, ctrlEl);
                 };
             }
 
             function buildParamList(fn) {
                 var paramList = {
+                    eventName: '',
                     fnName: '',
                     params: ''
                 },
-                    tokens = fn.split('(');
+                    tokens = fn.trim().split('=');
 
                 if (tokens.length > 0) {
-                    paramList.fnName = tokens[0];
-                    tokens = tokens[1].split(')');
-                    if (tokens.length > 0) {
-                        paramList.params = tokens[0].split(',');
+                    paramList.eventName = tokens[0].replace('on', '');
+
+                    if (tokens[1]) {
+                        tokens = tokens[1].split('(');
+                        paramList.fnName = tokens[0];
+                        tokens = tokens[1].split(')');
+                        if (tokens.length > 0) {
+                            //ToDo: parse int or string value
+                            paramList.params = tokens[0].split(',');
+                        }
                     }
                 }
 
                 return paramList;
             }
+
+            function tModel(ctrlEl, ctrlObj) {
+                var inputControls = ctrlEl.querySelectorAll('[t-model]');
+                for (var idx in inputControls) {
+                    if (inputControls.hasOwnProperty(idx)) {
+                        var input = inputControls[idx];
+                        var model = input.getAttribute('t-model');
+                        var viewModels = ctrlEl.querySelectorAll('[t-model-bind]');
+
+                        //create object into controller
+                        ctrlObj[model] = null;
+
+                        input.addEventListener('blur', function () {
+                            var value = this.value;
+                            ctrlObj[model] = value;
+                            viewModels[0].innerHTML = value;
+                        });
+                    }
+                }
+            }
+
         }
 
         function tRoute() {
@@ -317,6 +353,8 @@
                 }
             };
         }
+
+
     }
 
     function loadViewBasedOnHash(hash, element, parentName, dResolver) {

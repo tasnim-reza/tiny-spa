@@ -1,26 +1,30 @@
 ﻿<h1> Javascript Inheritance example </h1>
 
 <div t-controller="controllerA">
+    <h3>Controller A</h3>
     <form name="myForm">
-        <input name="name" type="text" t-twoway-model="myModel" />
-        <input name="institute" type="text" t-model="myModel" />
-        <!--<label t-bind="myModel"></label>-->
-        <button t-bind onclick="say('a','b')">on click A</button>
+        <!--<input name="name" type="text" t-twoway-model="myModel" />-->
+
+        <input name="institute" type="text" t-model="myModel" placeholder="fired, after blur" />
+        <label t-model-bind="myModel"></label>
+
+        <button type="button" t-bind=" onclick=say('my','name') ">on click A</button>
     </form>
 </div>
 
 <div t-controller="controllerB">
+    <br /><hr /><h3>Controller B</h3>
     <input type="text" t-twoway-model="myModel" />
     <input type="text" t-model="myModel" />
     <label t-bind="myModel"></label>
-    <button t-click="onclick">on click B</button>
+    <button>on click B</button>
 </div>
 
 <div t-controller="controllerC">
-    <h2>controller c</h2>
+    <br /><hr /><h3>Controller C</h3>
     <input type="text" t-twoway-model="myModel" />
     <input type="text" t-model="myModel" />
     <label t-bind="myModel"></label>
-    <button t-bind onclick="say()">on click C</button>
+    <button t-bind="onclick=say()">on click C</button>
 </div>
 <script src="src/example/inheritance-in-javascript-example.js"></script>
